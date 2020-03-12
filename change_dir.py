@@ -14,5 +14,5 @@ def replaceAll(file, searchExp, replaceExp):
 
 x = xlmBrowser("*.xml")
 for i in x:
-    replaceAll(i, "C:\\Users\\Administrator\\Desktop\\", "D:\\Data\\")
+    replaceAll(i, "E:\\", "D:\\Data\\")
     print("Changed " + i)
