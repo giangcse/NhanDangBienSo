@@ -5,6 +5,7 @@ import os
 import glob
 import fileinput
 from PIL import Image
+import shutil as st
 
 # Duyet anh
 def browserFile(ext=""):
@@ -23,7 +24,8 @@ if __name__ == "__main__":
     beta = sys.argv[2]
 
     for i in browserFile('*.jpg'):
-        filename = i[:-4] + '_(' + sys.argv[1] + ', ' + sys.argv[2] + ').jpg' # Ten file moi dang file_(x, y).jpg
+        filename_image = i[:-4] + '_(' + sys.argv[1] + ', ' + sys.argv[2] + ').jpg' # Ten file moi dang file_(x, y).jpg
+        filename_xml = i[:-4] + '_(' + sys.argv[1] + ', ' + sys.argv[2] + ').xml' # Ten file moi dang file_(x, y).xml
         if len(sys.argv) == 3:
             alpha = float(sys.argv[1])
             beta = int(sys.argv[2])
@@ -32,5 +34,6 @@ if __name__ == "__main__":
         # change image brightness g(x,y) = alpha*f(x,y) + beta
         img_new = change_brightness(img, alpha, beta)
         
-        cv2.imwrite(filename, img_new)
-        print("Created ", filename)
+        cv2.imwrite(filename_image, img_new)
+        st.copy(i[:-3]+'xml', filename_xml)
+        print("Created ", i[:-4])
