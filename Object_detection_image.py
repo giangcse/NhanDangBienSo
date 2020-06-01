@@ -24,6 +24,7 @@ import os
 import glob
 import fileinput
 import sys
+import pandas as pd
 from PIL import Image
 
 def browserFile(ext=""):
@@ -39,10 +40,10 @@ from utils import visualization_utils as vis_util
 # Name of the directory containing the object detection module we're using
 MODEL_NAME = 'inference_graph'
 # IMAGE_NAME = 'test5.jpg'
-TEST_IMAGE_PATHS = [ os.path.join('c:\\models\\research\\object_detection\\test_images', '{}'.format(i)) for i in browserFile('*.jpg') ]
+TEST_IMAGE_PATHS = [ os.path.join('/home/giang/models/research/object_detection/test_images', '{}'.format(i)) for i in browserFile('*.jpg') ]
 # print(TEST_IMAGE_PATHS)
 # Grab path to current working directory
-CWD_PATH = 'c:\\models\\research\\object_detection'
+CWD_PATH = '/home/giang/models/research/object_detection'
 
 # Path to frozen detection graph .pb file, which contains the model that is used
 # for object detection.
@@ -98,6 +99,10 @@ num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 # expand image dimensions to have shape: [1, None, None, 3]
 # i.e. a single-column array, where each item in the column has the pixel RGB value
 # print(PATH_TO_IMAGE)
+
+plate = {'plate': [], 'label': []}
+label_predict = []
+
 for i in TEST_IMAGE_PATHS:
     # print(i)
     image = cv2.imread(i)
@@ -123,14 +128,31 @@ for i in TEST_IMAGE_PATHS:
         min_score_thresh=0.60,
         groundtruth_box_visualization_color='red',
         skip_scores=True ) #skip_scores=True de xoa % do chinh xac
-        #De doi mau, vao utils/visualization_utils.py, tim draw = ImageDraw.Draw(image), them vao
-        #dong duoi la color = 'green'
+        # De doi mau, vao utils/visualization_utils.py, tim draw = ImageDraw.Draw(image), them vao
+        # dong duoi la color = 'green'
+        # De in label ra thi tim dong class_name = category_index[classes[i]]['name'] roi them lenh print o duoi
 
+    label_predict = vis_util.LABEL_PREDICT
     # All the results have been drawn on image. Now display the image.
     cv2.imshow(i, image)
-
     # Press any key to close the image
     cv2.waitKey(0)
 
+bienso = []
+nhan = []
+
+for i in label_predict:
+    for j in i:
+        if (j == 'plate'):
+            bienso.append('x') # Neu nhan ra plate thi danh dau x, khong thi khong danh
+
+    nhan.append("".join(i[1:])) # Bo phan tu dau la plate, lay nhung phan tu sau la so
+
+    
 # Clean up
+plate['plate'] = bienso
+plate['label'] = nhan
+
+df = pd.DataFrame(plate, columns=['plate', 'label'])
+df.to_csv(r'result.csv', index=False, header=True)
 cv2.destroyAllWindows()
