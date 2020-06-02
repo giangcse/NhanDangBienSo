@@ -33,7 +33,6 @@ def _file(str):
         print("Copied "+i)
 
 if __name__ == "__main__":
-    args = iter(sys.argv)
-    next(args)
+    args = sys.argv[1:]
     for i in args:
         _file(i)
